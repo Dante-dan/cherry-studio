@@ -1,10 +1,11 @@
 import { cacheService } from '@data/CacheService'
 import { useSharedCacheSelector, useSharedCacheValue } from '@data/hooks/useCache'
+import { isEqual } from 'es-toolkit/compat'
+import { useEffect, useRef } from 'react'
+
 import { loggerService } from '@logger'
 import { ipcApi, useIpcOn } from '@renderer/ipc'
 import type { CacheMiniAppAttention } from '@shared/data/cache/cacheValueTypes'
-import { isEqual } from 'es-toolkit/compat'
-import { useEffect, useRef } from 'react'
 
 const logger = loggerService.withContext('useMiniAppAttention')
 
