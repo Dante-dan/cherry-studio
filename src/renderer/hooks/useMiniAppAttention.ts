@@ -1,8 +1,8 @@
-import { cacheService } from '@data/CacheService'
-import { useSharedCacheSelector, useSharedCacheValue } from '@data/hooks/useCache'
 import { isEqual } from 'es-toolkit/compat'
 import { useEffect, useRef } from 'react'
 
+import { cacheService } from '@data/CacheService'
+import { useSharedCacheSelector, useSharedCacheValue } from '@data/hooks/useCache'
 import { loggerService } from '@logger'
 import { ipcApi, useIpcOn } from '@renderer/ipc'
 import type { CacheMiniAppAttention } from '@shared/data/cache/cacheValueTypes'

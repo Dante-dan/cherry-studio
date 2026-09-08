@@ -7,6 +7,12 @@
  * - Registry import support
  */
 
+import { and, asc, eq, inArray, type SQL } from 'drizzle-orm'
+import { isEqual } from 'es-toolkit/compat'
+
+import { application } from '@application'
+import type { ModelLookupResult } from '@cherrystudio/provider-registry'
+import { inferReasoningOwnedBy } from '@cherrystudio/provider-registry'
 import type { InsertUserModelRow, UserModelRow } from '@data/db/schemas/userModel'
 import { userModelTable } from '@data/db/schemas/userModel'
 import { defaultHandlersFor, type SqliteErrorHandlers, withSqliteErrors } from '@data/db/sqliteErrors'
@@ -25,12 +31,6 @@ import {
 } from '@data/services/ProviderRegistryService'
 import { providerService } from '@data/services/ProviderService'
 import { insertManyWithOrderKey } from '@data/services/utils/orderKey'
-import { and, asc, eq, inArray, type SQL } from 'drizzle-orm'
-import { isEqual } from 'es-toolkit/compat'
-
-import { application } from '@application'
-import type { ModelLookupResult } from '@cherrystudio/provider-registry'
-import { inferReasoningOwnedBy } from '@cherrystudio/provider-registry'
 import { loggerService } from '@logger'
 import { DataApiErrorFactory } from '@shared/data/api/errors'
 import type { CreateModelDto, ListModelsQuery, UpdateModelDto } from '@shared/data/api/schemas/models'
