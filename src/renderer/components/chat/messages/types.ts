@@ -29,10 +29,14 @@ import type { ReactNode } from 'react'
 
 export type { MessageUiState } from '@renderer/types/message'
 
+export type SelectAllState = boolean | 'indeterminate'
+
 export interface MessageListSelectionState {
   enabled: boolean
   isMultiSelectMode: boolean
   selectedMessageIds?: readonly string[]
+  selectAllState?: SelectAllState
+  selectAllDisabled?: boolean
 }
 
 export interface MessageListRuntime {
@@ -403,6 +407,7 @@ export interface MessageListActions {
   removeMessageTranslation?: (messageId: string) => void | Promise<void>
   renderRegenerateModelPicker?: (options: MessageModelPickerRenderOptions) => ReactNode
   selectMessage?: (messageId: string, selected: boolean) => void
+  toggleSelectAllMessages?: (checked: boolean) => void
   toggleMultiSelectMode?: (enabled: boolean) => void
   copySelectedMessages?: (messageIds?: readonly string[]) => void | Promise<void>
   saveSelectedMessages?: (messageIds?: readonly string[]) => void | Promise<void>
