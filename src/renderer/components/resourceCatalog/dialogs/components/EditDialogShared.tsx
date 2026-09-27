@@ -277,6 +277,8 @@ export function KnowledgeBaseField<TValues extends KnowledgeBaseFieldValues>({
   formLabel = true,
   labelClassName,
   disabled = false,
+  accessById,
+  onAccessChange,
   onOpenKnowledgePage
 }: {
   form: UseFormReturn<TValues>
@@ -284,6 +286,8 @@ export function KnowledgeBaseField<TValues extends KnowledgeBaseFieldValues>({
   formLabel?: boolean
   labelClassName?: string
   disabled?: boolean
+  accessById?: Readonly<Record<string, 'read' | 'read-write'>>
+  onAccessChange?: (id: string, access: 'read' | 'read-write') => void
   onOpenKnowledgePage?: () => void
 }) {
   const { t } = useTranslation()
@@ -374,6 +378,17 @@ export function KnowledgeBaseField<TValues extends KnowledgeBaseFieldValues>({
                       {t('library.config.knowledge.doc_count', { count: kb.itemCount ?? 0 })}
                     </div>
                   </div>
+                  {onAccessChange && (
+                    <select
+                      value={accessById?.[kb.id] ?? 'read'}
+                      disabled={disabled}
+                      onChange={(event) => onAccessChange(kb.id, event.target.value as 'read' | 'read-write')}
+                      aria-label={`${kb.name} access`}
+                      className="rounded-md border border-border bg-background px-2 py-1 text-xs">
+                      <option value="read">Read only</option>
+                      <option value="read-write">Read and write</option>
+                    </select>
+                  )}
                   <Button
                     type="button"
                     variant="ghost"
