@@ -608,6 +608,28 @@ describe('AppShell', () => {
     expect(mocks.closeTab).toHaveBeenCalledWith('tab2')
   })
 
+  it('closes the macOS window when the last tab is closed by shortcut', () => {
+    mocks.platformState.isMac = true
+
+    render(<AppShell />)
+    mocks.commandHandlers.get('tab.close')?.handler()
+
+    expect(mocks.ipcRequest).toHaveBeenCalledWith('window.close')
+    expect(mocks.closeTab).not.toHaveBeenCalled()
+  })
+
+  it('keeps closing the active tab on macOS when another tab remains', () => {
+    mocks.platformState.isMac = true
+    mocks.tabs = [...mocks.tabs, { id: 'tab2', isDormant: false, title: 'Tab 2', type: 'route', url: '/app/files' }]
+    mocks.activeTabId = 'tab2'
+
+    render(<AppShell />)
+    mocks.commandHandlers.get('tab.close')?.handler()
+
+    expect(mocks.closeTab).toHaveBeenCalledWith('tab2')
+    expect(mocks.ipcRequest).not.toHaveBeenCalledWith('window.close')
+  })
+
   it('disables the tab-close shortcut when no tab is active', () => {
     mocks.activeTabId = 'missing'
 
