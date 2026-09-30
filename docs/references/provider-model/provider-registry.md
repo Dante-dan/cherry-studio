@@ -332,7 +332,9 @@ in the composer tools menu. This opt-in is stored per assistant and is off for e
 It lets the model execute code on xAI's servers; it does not enable the local Python code-block runner.
 Other models and endpoints do not receive the tool, even if the assistant retains the toggle.
 
-Native calls appear with their status and any available input/result in the conversation. Native
+Native calls appear in the conversation. The pinned xAI SDK currently emits an empty result
+for streamed native calls and omits detailed code/output fields; full execution output display
+requires an upstream SDK improvement. The assistant's final answer remains available. Native
 in-conversation image generation is separate and is not enabled by this setting.
 
 ## File Locations

@@ -4,7 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ComposerToolLauncher } from '@renderer/components/composer/toolLauncher'
 
 const { useAssistantMock, useProviderMock, updateAssistant } = vi.hoisted(() => ({
-  useAssistantMock: vi.fn(), useProviderMock: vi.fn(), updateAssistant: vi.fn()
+  useAssistantMock: vi.fn(),
+  useProviderMock: vi.fn(),
+  updateAssistant: vi.fn()
 }))
 vi.mock('@renderer/hooks/useAssistant', () => ({ useAssistant: useAssistantMock }))
 vi.mock('@renderer/hooks/useProvider', () => ({ useProviderById: useProviderMock }))
@@ -28,10 +30,13 @@ describe('server-side code execution toggle', () => {
       model: { id: 'grok::grok-4.7', apiModelId: 'grok-4.7', providerId: 'grok' },
       updateAssistant
     })
-    useProviderMock.mockReturnValue({ provider: {
-      id: 'grok', defaultChatEndpoint: 'openai-responses',
-      endpointConfigs: { 'openai-responses': { adapterFamily: 'xai-responses' } }
-    } })
+    useProviderMock.mockReturnValue({
+      provider: {
+        id: 'grok',
+        defaultChatEndpoint: 'openai-responses',
+        endpointConfigs: { 'openai-responses': { adapterFamily: 'xai-responses' } }
+      }
+    })
   })
 
   it('leaves old assistants opted out and persists explicit user opt-in', async () => {
@@ -49,7 +54,9 @@ describe('server-side code execution toggle', () => {
     act(() => unavailable.action?.({} as never))
     expect(updateAssistant).not.toHaveBeenCalled()
     useAssistantMock.mockReturnValue({
-      assistant: { settings: { enableNativeCodeExecution: true } }, model: undefined, updateAssistant
+      assistant: { settings: { enableNativeCodeExecution: true } },
+      model: undefined,
+      updateAssistant
     })
     const enabled = await launcher()
     expect(enabled.active).toBe(false)

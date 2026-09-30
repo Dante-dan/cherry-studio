@@ -10,7 +10,10 @@ import { isNativeCodeExecutionAvailable } from '@shared/utils/provider'
 
 import { NATIVE_CODE_EXECUTION_TOOLBAR_MANIFEST } from '../toolbarManifests'
 
-const NativeCodeExecutionRuntime: FC<{ assistantId: string; launcher: ToolLauncherApi }> = ({ assistantId, launcher }) => {
+const NativeCodeExecutionRuntime: FC<{ assistantId: string; launcher: ToolLauncherApi }> = ({
+  assistantId,
+  launcher
+}) => {
   const { t } = useTranslation()
   const { assistant, model, updateAssistant } = useAssistant(assistantId)
   const { provider } = useProviderById(model?.providerId)
@@ -23,17 +26,23 @@ const NativeCodeExecutionRuntime: FC<{ assistantId: string; launcher: ToolLaunch
     void updateAssistant({ settings: { enableNativeCodeExecution: !enabled } })
   }, [assistant, disabled, enabled, updateAssistant])
 
-  useEffect(() => launcher.registerLaunchers([{
-    ...NATIVE_CODE_EXECUTION_TOOLBAR_MANIFEST.toolbar,
-    sources: ['popover'],
-    label: t('chat.input.native_code_execution'),
-    description: t('chat.input.native_code_execution.description'),
-    searchAliases: getQuickPanelSearchAliases(t, 'chat.input.native_code_execution', ['code execution']),
-    disabledReason: disabled ? t('chat.input.native_code_execution.unavailable') : undefined,
-    disabled,
-    active: enabled && available,
-    action: handleToggle
-  }]), [available, disabled, enabled, handleToggle, launcher, t])
+  useEffect(
+    () =>
+      launcher.registerLaunchers([
+        {
+          ...NATIVE_CODE_EXECUTION_TOOLBAR_MANIFEST.toolbar,
+          sources: ['popover'],
+          label: t('chat.input.native_code_execution'),
+          description: t('chat.input.native_code_execution.description'),
+          searchAliases: getQuickPanelSearchAliases(t, 'chat.input.native_code_execution', ['code execution']),
+          disabledReason: disabled ? t('chat.input.native_code_execution.unavailable') : undefined,
+          disabled,
+          active: enabled && available,
+          action: handleToggle
+        }
+      ]),
+    [available, disabled, enabled, handleToggle, launcher, t]
+  )
   return null
 }
 
@@ -42,6 +51,8 @@ export default defineTool({
   label: NATIVE_CODE_EXECUTION_TOOLBAR_MANIFEST.label,
   visibleInScopes: NATIVE_CODE_EXECUTION_TOOLBAR_MANIFEST.visibleInScopes,
   composer: {
-    runtime: ({ context }) => <NativeCodeExecutionRuntime assistantId={context.assistant!.id} launcher={context.launcher} />
+    runtime: ({ context }) => (
+      <NativeCodeExecutionRuntime assistantId={context.assistant!.id} launcher={context.launcher} />
+    )
   }
 })
