@@ -1,4 +1,5 @@
 import attachmentTool from './definitions/attachmentTool'
+import nativeCodeExecutionTool from './definitions/nativeCodeExecutionTool'
 import generateImageTool from './definitions/generateImageTool'
 import knowledgeBaseTool from './definitions/knowledgeBaseTool'
 import mcpPromptTool from './definitions/mcpPromptTool'
@@ -23,6 +24,7 @@ export const BUILTIN_COMPOSER_TOOLS: ToolDefinition<any, any>[] = [
   webSearchTool,
   knowledgeBaseTool,
   generateImageTool,
+  nativeCodeExecutionTool,
   slashCommandsTool,
   permissionModeTool,
   mcpStatusTool,
