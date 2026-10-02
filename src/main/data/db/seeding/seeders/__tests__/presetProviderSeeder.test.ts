@@ -8,6 +8,7 @@
  */
 
 import { setupTestDatabase } from '@test-helpers/db'
+import { asc } from 'drizzle-orm'
 import { describe, expect, it, vi } from 'vitest'
 
 import { userProviderTable } from '@data/db/schemas/userProvider'
@@ -90,9 +91,35 @@ describe('PresetProviderSeeder.run — insert-only behavior', () => {
     // User customization must be preserved
     expect(openai?.name).toBe('User-renamed OpenAI')
 
+    expect(openai?.orderKey).toBe(generateOrderKeyBetween(null, null))
     const ids = rows.map((r) => r.providerId)
     expect(ids).toContain('anthropic')
     expect(ids).not.toContain('cherryai')
+  })
+
+  it('repairs legacy provider order keys before appending new presets without losing customizations', async () => {
+    await dbh.db.insert(userProviderTable).values([
+      { providerId: 'custom', name: 'Custom provider', orderKey: 'a0', isEnabled: true },
+      { providerId: 'openai', name: 'Renamed OpenAI', orderKey: 'zz', isEnabled: true }
+    ])
+    const before = dbh.db.select().from(userProviderTable).orderBy(asc(userProviderTable.orderKey)).all()
+
+    const seed = new PresetProviderSeeder()
+    seed.run(dbh.db)
+
+    const rows = dbh.db.select().from(userProviderTable).orderBy(asc(userProviderTable.orderKey)).all()
+    expect(rows.slice(0, 2).map((row) => row.providerId)).toEqual(['custom', 'openai'])
+    expect(rows.map((row) => row.providerId)).toContain('anthropic')
+    for (const original of before) {
+      const repaired = rows.find((row) => row.providerId === original.providerId)!
+      expect({ ...repaired, orderKey: original.orderKey, updatedAt: original.updatedAt }).toEqual(original)
+    }
+    for (const row of rows) {
+      expect(() => generateOrderKeyBetween(row.orderKey, null)).not.toThrow()
+    }
+
+    seed.run(dbh.db)
+    expect(dbh.db.select().from(userProviderTable).orderBy(asc(userProviderTable.orderKey)).all()).toEqual(rows)
   })
 
   it('never seeds endpointConfigs — registry connection config resolves at read time', async () => {

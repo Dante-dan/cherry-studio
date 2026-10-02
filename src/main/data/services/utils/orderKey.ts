@@ -101,6 +101,16 @@ export function generateOrderKeySequence(count: number): string[] {
   return generateNKeysBetween(null, null, count)
 }
 
+/** Check whether a persisted key can be used as a fractional-indexing boundary. */
+export function isValidOrderKey(key: string): boolean {
+  try {
+    generateKeyBetween(key, null)
+    return true
+  } catch {
+    return false
+  }
+}
+
 /**
  * Generate a single key strictly between two existing keys (either may be null).
  * Thin wrapper around `fractional-indexing.generateKeyBetween`.

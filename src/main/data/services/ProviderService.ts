@@ -20,7 +20,13 @@ import { isMigratedFromV1 } from '@data/migration/v1MigrationOrigin'
 import { getDataService, registerDataService } from '@data/services/dataServiceRegistry'
 import { pinService } from '@data/services/PinService'
 import type { ProviderDisplayMetadata, ReasoningProviderContext } from '@data/services/ProviderRegistryService'
-import { applyMoves, insertManyWithOrderKey, insertWithOrderKey } from '@data/services/utils/orderKey'
+import {
+  applyMoves,
+  insertManyWithOrderKey,
+  insertWithOrderKey,
+  isValidOrderKey,
+  resetOrder
+} from '@data/services/utils/orderKey'
 import {
   clearSingleFileRefTx,
   getSingleFileRefId,
@@ -638,7 +644,7 @@ class ProviderService {
   /**
    * Batch insert providers (used by PresetProviderSeeder for preset seeding).
    * Insert-only — existing providers are filtered out before order keys are assigned.
-   * All user-customizable fields are preserved.
+   * Legacy order keys are repaired in the same relative order; other user fields are preserved.
    */
   batchUpsert(providers: NewUserProviderInput[]): void {
     if (providers.length === 0) return
@@ -649,8 +655,18 @@ class ProviderService {
     logger.info('Batch upserted providers', { insertedCount })
   }
 
-  batchUpsertTx(tx: Pick<DbType, 'select' | 'insert'>, providers: NewUserProviderInput[]): number {
-    const existing = tx.select({ providerId: userProviderTable.providerId }).from(userProviderTable).all()
+  batchUpsertTx(tx: Pick<DbType, 'select' | 'insert' | 'update'>, providers: NewUserProviderInput[]): number {
+    const existing = tx
+      .select({ providerId: userProviderTable.providerId, orderKey: userProviderTable.orderKey })
+      .from(userProviderTable)
+      .orderBy(asc(userProviderTable.orderKey), asc(userProviderTable.providerId))
+      .all()
+    if (existing.some((row) => !isValidOrderKey(row.orderKey))) {
+      resetOrder(tx, userProviderTable, existing, {
+        pkColumn: userProviderTable.providerId
+      })
+      logger.warn('Repaired legacy provider order keys', { providerCount: existing.length })
+    }
     const existingIds = new Set(existing.map((row) => row.providerId))
     const newProviders = providers.filter((provider) => !existingIds.has(provider.providerId))
 
