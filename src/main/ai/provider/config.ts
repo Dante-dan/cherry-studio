@@ -202,7 +202,12 @@ export async function resolveProviderAiSdkConfig(
 
   const aiSdkProviderId = appProviderIds[resolveAiSdkProviderId(provider, endpointType)]
 
-  const formattedBaseUrl = formatBaseURL(baseUrl, provider, endpointType)
+  // Image SDKs append their own generations/edits path. A pasted full image
+  // endpoint must retain its exact base prefix (including versionless relays).
+  const imageBaseUrl = isGenerateImageModel(model)
+    ? baseUrl.trim().replace(/\/images\/(?:generations|edits)\/?#?$/, '#')
+    : baseUrl
+  const formattedBaseUrl = formatBaseURL(imageBaseUrl, provider, endpointType)
   const { baseURL, endpoint } = routeToEndpoint(formattedBaseUrl)
   const imageExtensionPreset = IMAGE_EXTENSION_PRESETS.find((preset) => matchesPreset(provider, preset))
 

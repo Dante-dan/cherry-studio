@@ -1897,3 +1897,39 @@ describe('providerToAiSdkConfig — builder dispatch matrix', () => {
     })
   })
 })
+
+describe('image endpoint base URL normalization (upstream #18572)', () => {
+  it.each([
+    ['https://token.sensenova.cn/v1/images/generations', 'https://token.sensenova.cn/v1'],
+    ['https://token.sensenova.cn/v1/images/generations#', 'https://token.sensenova.cn/v1'],
+    ['https://relay.example.com/proxy/images/generations/', 'https://relay.example.com/proxy'],
+    ['https://relay.example.com/images/edits', 'https://relay.example.com'],
+    ['https://relay.example.com/v2/images/edits/#', 'https://relay.example.com/v2'],
+    ['https://relay.example.com/v1', 'https://relay.example.com/v1'],
+    ['https://relay.example.com', 'https://relay.example.com/v1']
+  ])('avoids appending the image path twice for %s', async (host, expectedBaseURL) => {
+    const provider = makeProvider({
+      id: 'custom-relay',
+      defaultChatEndpoint: ENDPOINT_TYPE.OPENAI_CHAT_COMPLETIONS,
+      endpointConfigs: { [ENDPOINT_TYPE.OPENAI_CHAT_COMPLETIONS]: { baseUrl: host } }
+    })
+    const model = makeModel({ capabilities: [MODEL_CAPABILITY.IMAGE_GENERATION] })
+
+    const config = await providerToAiSdkConfig(provider, model)
+
+    expect(config.providerSettings).toMatchObject({ baseURL: expectedBaseURL })
+  })
+
+  it('does not interpret an image-looking URL as an endpoint for a chat model', async () => {
+    const provider = makeProvider({
+      id: 'custom-relay',
+      defaultChatEndpoint: ENDPOINT_TYPE.OPENAI_CHAT_COMPLETIONS,
+      endpointConfigs: {
+        [ENDPOINT_TYPE.OPENAI_CHAT_COMPLETIONS]: { baseUrl: 'https://relay.example.com/v1/images/generations' }
+      }
+    })
+    const config = await providerToAiSdkConfig(provider, makeModel())
+
+    expect(config.providerSettings).toMatchObject({ baseURL: 'https://relay.example.com/v1/images/generations' })
+  })
+})
