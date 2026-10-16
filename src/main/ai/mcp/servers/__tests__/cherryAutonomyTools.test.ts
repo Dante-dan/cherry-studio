@@ -205,10 +205,10 @@ describe('CherryAutonomyTools', () => {
     )
   })
 
-  it('hides notify for sessions without a source channel', async () => {
+  it('lists notify without recipients and rejects calls before adapter access', async () => {
     const server = createServer('agent_test', WORKSPACE_PATH, null)
 
-    expect(server.tools().map((tool) => tool.name)).not.toContain('notify')
+    expect(server.tools().map((tool) => tool.name)).toContain('notify')
     expect(server.handles('notify')).toBe(true)
 
     const result = await callTool(server, { message: 'Hello' }, 'notify')

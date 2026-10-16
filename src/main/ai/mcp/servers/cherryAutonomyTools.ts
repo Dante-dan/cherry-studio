@@ -433,21 +433,17 @@ export class CherryAutonomyTools {
   }
 
   tools(): Tool[] {
-    return AUTONOMY_TOOLS.flatMap((tool) => {
-      if (tool.name !== NOTIFY_TOOL_NAME) return [tool]
-      return this.trustedNotifyChannels.length > 0
-        ? [
-            {
-              ...tool,
-              description: `${tool.description} Configured recipients: ${this.trustedNotifyChannels.map((channel) => `${channel.type} (${channel.id})`).join(', ')}.`
-            }
-          ]
-        : []
+    return AUTONOMY_TOOLS.map((tool) => {
+      if (tool.name !== NOTIFY_TOOL_NAME) return tool
+      if (this.trustedNotifyChannels.length === 0) return tool
+      return {
+        ...tool,
+        description: `${tool.description} Configured recipients: ${this.trustedNotifyChannels.map((channel) => `${channel.type} (${channel.id})`).join(', ')}.`
+      }
     })
   }
 
   handles(toolName: string): boolean {
-    // Keep hidden tools routable so a stale catalog receives the policy error from `call()`.
     return AUTONOMY_TOOLS.some((tool) => tool.name === toolName)
   }
 
