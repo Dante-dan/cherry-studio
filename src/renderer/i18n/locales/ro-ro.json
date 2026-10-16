@@ -1950,7 +1950,7 @@
   "library.config.agent.field.runtime.option_description.dsh": "Adaugă și combină capabilități cu pluginuri flexibile",
   "library.config.agent.field.runtime.option_description.pi": "Rapid și eficient",
   "library.config.agent.field.small_model.empty": "Nesetat — urmează modelul principal",
-  "library.config.agent.field.small_model.hint": "Fixează modelul la care se rezolvă aliasul `haiku` din Claude Code (ANTHROPIC_DEFAULT_HAIKU_MODEL). Puteți atribui aici modelul oricărui furnizor.",
+  "library.config.agent.field.small_model.hint": "Fixează modelul la care se rezolvă aliasul `haiku` din Claude Code (ANTHROPIC_DEFAULT_HAIKU_MODEL). Puteți atribui aici modelul oricărui furnizor. Modul automat selectează modelul de clasificare a permisiunilor independent de acest alias.",
   "library.config.agent.field.small_model.label": "Model Haiku",
   "library.config.agent.model_config": "Model",
   "library.config.agent.section.permission.desc": "Domeniu de autorizare pentru acțiunile agentului",

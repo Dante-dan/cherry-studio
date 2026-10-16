@@ -1950,7 +1950,7 @@
   "library.config.agent.field.runtime.option_description.dsh": "Добавляйте и комбинируйте возможности с помощью плагинов",
   "library.config.agent.field.runtime.option_description.pi": "Быстрый и лёгкий",
   "library.config.agent.field.small_model.empty": "Не задано — используется основная модель",
-  "library.config.agent.field.small_model.hint": "Закрепляет, в какую модель разрешается псевдоним `haiku` в Claude Code (ANTHROPIC_DEFAULT_HAIKU_MODEL). Здесь можно назначить модель любого провайдера.",
+  "library.config.agent.field.small_model.hint": "Закрепляет, в какую модель разрешается псевдоним `haiku` в Claude Code (ANTHROPIC_DEFAULT_HAIKU_MODEL). Здесь можно назначить модель любого провайдера. Автоматический режим выбирает модель классификации разрешений независимо от этого псевдонима.",
   "library.config.agent.field.small_model.label": "Модель Haiku",
   "library.config.agent.model_config": "Модель",
   "library.config.agent.section.permission.desc": "Область авторизации для действий агента",

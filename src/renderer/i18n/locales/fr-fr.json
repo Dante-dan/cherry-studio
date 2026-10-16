@@ -1950,7 +1950,7 @@
   "library.config.agent.field.runtime.option_description.dsh": "Ajoutez et combinez des capacités avec des plugins flexibles",
   "library.config.agent.field.runtime.option_description.pi": "Rapide et léger",
   "library.config.agent.field.small_model.empty": "Non défini — suit le modèle principal",
-  "library.config.agent.field.small_model.hint": "Épingle le modèle vers lequel l’alias `haiku` de Claude Code se résout (ANTHROPIC_DEFAULT_HAIKU_MODEL). Vous pouvez y affecter le modèle de n’importe quel fournisseur.",
+  "library.config.agent.field.small_model.hint": "Épingle le modèle vers lequel l’alias `haiku` de Claude Code se résout (ANTHROPIC_DEFAULT_HAIKU_MODEL). Vous pouvez y affecter le modèle de n’importe quel fournisseur. Le mode automatique sélectionne son modèle de classification des autorisations indépendamment de cet alias.",
   "library.config.agent.field.small_model.label": "Modèle Haiku",
   "library.config.agent.model_config": "Modèle",
   "library.config.agent.section.permission.desc": "Portée d'autorisation pour les actions de l'agent",
