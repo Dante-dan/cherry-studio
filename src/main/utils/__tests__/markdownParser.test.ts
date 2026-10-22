@@ -1,5 +1,7 @@
+import * as crypto from 'crypto'
 import * as fs from 'fs'
 
+import { mockMainLoggerService } from '@test-mocks/MainLoggerService'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { parsePluginMetadata, parseSkillMetadata } from '../markdownParser'
@@ -117,6 +119,35 @@ Body`)
       agent: 'parallel:parallel-subagent',
       allowed_tools: ['Bash(parallel-cli:*)']
     })
+  })
+
+  // Catches CRLF final quoted/flow values falling back and plain values retaining a carriage return.
+  it.each([
+    ['nested quoted value', 'metadata:\n  version: "1.1"', { version: '1.1' }],
+    ['flow collection', 'tools: ["Read", "Grep"]', { tools: ['Read', 'Grep'] }],
+    ['plain value', 'version: 1.1', { version: '1.1' }]
+  ])('parses CRLF skill frontmatter with a final %s without recovery', async (_label, finalValue, expected) => {
+    const content = `---\nname: crlf-skill\n${finalValue}\n---\n\nBody\n`
+    vi.mocked(fs.promises.readFile).mockResolvedValue(content)
+    const lf = await parseSkillMetadata('/abs/skill', 'skills/crlf-skill', 'skills')
+    vi.mocked(fs.promises.readFile).mockResolvedValue(content.replace(/\n/g, '\r\n'))
+    const crlf = await parseSkillMetadata('/abs/skill', 'skills/crlf-skill', 'skills')
+
+    expect(crlf).toMatchObject(expected)
+    expect({ ...crlf, contentHash: lf.contentHash }).toEqual(lf)
+    expect(crlf.contentHash).not.toBe(lf.contentHash)
+    expect(mockMainLoggerService.warn).not.toHaveBeenCalled()
+  })
+
+  it('parses CRLF plugin flow values without recovery and preserves the original content hash', async () => {
+    const content = '---\r\nname: crlf-plugin\r\ntools: ["Read", "Grep"]\r\n---\r\n\r\nBody\r\n'
+    vi.mocked(fs.promises.readFile).mockResolvedValue(content)
+
+    const metadata = await parsePluginMetadata('/abs/plugin.md', 'plugins/plugin.md', 'plugins', 'agent')
+
+    expect(metadata.tools).toEqual(['Read', 'Grep'])
+    expect(metadata.contentHash).toBe(crypto.createHash('sha256').update(content).digest('hex'))
+    expect(mockMainLoggerService.warn).not.toHaveBeenCalled()
   })
 
   it('prefers a top-level skill version over metadata.version', async () => {

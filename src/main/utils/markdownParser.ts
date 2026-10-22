@@ -187,7 +187,7 @@ export async function parsePluginMetadata(
   try {
     const parsed = matter(content, {
       engines: {
-        yaml: (s) => parse(s, YAML_PARSE_OPTIONS) as object
+        yaml: (s) => parse(s.replace(/\r\n?/g, '\n'), YAML_PARSE_OPTIONS) as object
       }
     })
     data = parsed.data ?? {}
@@ -346,7 +346,7 @@ export async function parseSkillMetadata(
   try {
     const parsed = matter(content, {
       engines: {
-        yaml: (s) => parse(s, YAML_PARSE_OPTIONS) as object
+        yaml: (s) => parse(s.replace(/\r\n?/g, '\n'), YAML_PARSE_OPTIONS) as object
       }
     })
     data = parsed.data ?? {}
