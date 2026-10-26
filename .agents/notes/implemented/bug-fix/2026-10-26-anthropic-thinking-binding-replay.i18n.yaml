@@ -1,0 +1,5 @@
+# Bilingual-pair consistency record (docs/i18n/README.md).
+# After editing either side, update its counterpart and re-record with:
+#   pnpm docs:check-pairing --write .agents/notes/implemented/bug-fix/2026-10-26-anthropic-thinking-binding-replay.md
+2026-10-26-anthropic-thinking-binding-replay.md: 415a2f231baab605dc5a688ecc5d32f2bd674e22
+2026-10-26-anthropic-thinking-binding-replay.zh.md: 273a724006a56323cd8091530f97799265e57c9b

@@ -74,6 +74,7 @@ export const INTERNAL_FEATURES = [
   simulateStreamingFeature,
   anthropicCacheFeature,
   anthropicHeadersFeature,
+  anthropicThinkingBindingFeature,
   openrouterReasoningFeature,
   noThinkFeature,
   qwenThinkingFeature,
@@ -84,6 +85,8 @@ export const INTERNAL_FEATURES = [
   steerYieldFeature
 ]
 ```
+
+`anthropicThinkingBindingFeature` requests server-side `drop_block` for signed Claude 5.5 history on adaptive Anthropic Messages requests. The SDK adds the binding beta header; explicit policies, incompatible modes, native Bedrock, and Azure Anthropic remain unchanged. It preserves stored and transmitted history and does not validate signatures locally.
 
 Callers can append per-request `extraFeatures`; those run after the
 internal set. (AiService's analytics is *not* one of these — it is injected
